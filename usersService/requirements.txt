@@ -1,0 +1,8 @@
+Django
+django-redis
+psycopg2-binary
+pytz
+sqlparse
+django-cors-headers
+PyJWT
+social-auth-app-django
