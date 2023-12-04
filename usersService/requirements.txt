@@ -6,3 +6,6 @@ sqlparse
 django-cors-headers
 PyJWT
 social-auth-app-django
+mongoengine
+djongo
+python-decouple

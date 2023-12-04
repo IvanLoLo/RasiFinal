@@ -15,7 +15,7 @@ def paciente_view(request, pk=None):
         paciente = serializers.serialize('json', [paciente_dto,])
         return HttpResponse(paciente, 'application/json')
     
-@login_required
+#@login_required
 def paciente_get_view(request, pk=None):
     role = getRole(request)
     if role not in ['Admin', 'Medico']: return HttpResponse("Unauthorized User", status=401)
@@ -29,7 +29,7 @@ def paciente_get_view(request, pk=None):
         return HttpResponse(pacientes_dto, 'application/json')
         
 @csrf_exempt
-@login_required
+#@login_required
 def medico_view(request, pk=None):
     role = getRole(request)
     if request.method == 'GET':

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,7 +90,7 @@ WSGI_APPLICATION = 'usersService.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -98,17 +99,27 @@ DATABASES = {
 }
 
 """
+
+DB_USERNAME = config('DB_USERNAME', default='admin')
+DB_PASSWORD = config('DB_PASSWORD', default='admin_password')
+DB_HOST = config('DB_HOST', default='34.132.173.31')
+DB_PORT = config('DB_PORT', default=27017, cast=int)
+DB_NAME = config('DB_NAME', default='your_database_name')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'ENGINE': 'djongo',
+        'NAME': DB_NAME,
+        'ENFORCE_SCHEMA': False,  # Set this to False if you don't want to enforce schema
+        'CLIENT': {
+            'host': DB_HOST,  # Replace with your MongoDB host
+            'port': DB_PORT,  # Replace with your MongoDB port
+            'username': DB_USERNAME,  # Replace with your MongoDB username
+            'password': DB_PASSWORD,  # Replace with your MongoDB password
+            'authSource': 'admin',  # Replace with your MongoDB authentication source
+        }
     }
 }
-"""
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
