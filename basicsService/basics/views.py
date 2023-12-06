@@ -9,7 +9,7 @@ from .logic import basics_logic as vl
 @csrf_exempt
 def basics_view(request):
     if request.method == 'GET':
-        return HttpResponse("U get to basics, god job!", 'application/json')
+        return HttpResponse("Hello, from Basics Microservice!")
 
 @csrf_exempt
 def contract_view(request):
