@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-6%043(p4e_m$%@hv0!^880_c-%fof(_l+12203)mz3r*gjxa9w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # storage
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
