@@ -1,13 +1,20 @@
 import { Cita } from './citas.model.js';
 import { Op } from 'sequelize';
 import uuidValidate from 'uuid-validate';
+import getRole from './auth0backend.js';
+
+const reviewRole = async (req, roles) => {
+    const role = await getRole(req);
+    if(roles.includes(role)) return true;
+    return false;
+}
 
 export const getCitas = async (req, res) => {
     try {
+        if(!await reviewRole(req, ['Admin', 'Doctor'])) return res.status(401).json({message: 'Unauthorized User'});
         const citas = await Cita.findAll();
         res.json(citas);
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message: 'Something goes wrong',
             data: {}
@@ -20,6 +27,7 @@ export const getCitaById = async (req, res) => {
     if(!id) return res.status(400).json({message: 'Id not provided'});
     if(!uuidValidate(id)) return res.status(400).json({message: 'Invalid id'});
     try {
+        if(!await reviewRole(req, ['Admin', 'Doctor'])) return res.status(401).json({message: 'Unauthorized User'});
         const cita = await Cita.findOne({
             where: {
                 id
@@ -44,6 +52,7 @@ export const getCitaByFecha = async (req, res) => { //yyyy-mm-dd format
     const nextWeek = new Date(req.params.fecha);
     nextWeek.setDate(currentDate.getDate() + 7);
     try {
+        if(!await reviewRole(req, ['Admin'])) return res.status(401).json({message: 'Unauthorized User'});
         const count = await Cita.count({
             where: {
                 fecha: {
@@ -72,6 +81,7 @@ export const getCitaByMes = async (req, res) => { //yyyy-mm format
     nextMonth.setMonth(currentDate.getMonth() + 1);
 
     try {
+        if(!await reviewRole(req, ['Admin'])) return res.status(401).json({message: 'Unauthorized User'});
 
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth() + 1;
@@ -103,6 +113,8 @@ export const getCitaByMes = async (req, res) => { //yyyy-mm format
 export const getCitaByEspecialidad = async (req, res) => {
     const especialidad = req.params.especialidad;
     try {
+        if(!await reviewRole(req, ['Admin'])) return res.status(401).json({message: 'Unauthorized User'});
+
         const count = await Cita.count({
             where: {
                 especialidad: especialidad
@@ -126,6 +138,7 @@ export const createCita = async (req, res) => {
     if (!paciente || !doctor || !especialidad || !fecha || !motivo || !estadoCita) 
         return res.status(400).json({message: 'Invalid data'});
     try {
+        if(!await reviewRole(req, ['Admin', 'Doctor', 'Patient User'])) return res.status(401).json({message: 'Unauthorized User'});
         const newCita = await Cita.create({
             paciente,
             doctor,

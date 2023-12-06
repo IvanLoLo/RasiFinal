@@ -1,18 +1,10 @@
-import jwt from 'jsonwebtoken';
-
-export const loginRequired = (req, res, next) => {
+export const loginRequired = async (req, res, next) => {
     let token = req.headers['authorization']
-    if (!token) return res.status(401).json({message: 'An access token is required to proceed'});
-    token = token.split(' ')[1];
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ message: 'Forbidden - Invalid token' });
-        }
-
-        console.log("User authenticated");
-
-        //req.user = user;
-        //console.log("User", user);
-        next();
-    });
+    if (!token) return res.status(401).json({error: 'An access token is required to proceed'});
+    try {
+        token = token.split(' ')[1];
+    } catch (error) {
+        return res.status(401).json({error: 'Invalid access token'});
+    }
+    next();
 }
