@@ -6,7 +6,8 @@ from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from usersService.auth0backend import getRole
-        
+from .auth0backend import getRole
+
 @csrf_exempt
 def paciente_view(request, pk=None):
     if request.method == 'GET': return paciente_get_view(request, pk)
@@ -18,7 +19,7 @@ def paciente_view(request, pk=None):
 #@login_required
 def paciente_get_view(request, pk=None):
     role = getRole(request)
-    if role not in ['Admin', 'Medico']: return HttpResponse("Unauthorized User", status=401)
+    if role not in ['Admin', 'Doctor']: return HttpResponse("Unauthorized User", status=401)
     if pk:
         paciente = vl.get_paciente(pk)
         paciente_dto = serializers.serialize('json', [paciente,])
@@ -33,7 +34,7 @@ def paciente_get_view(request, pk=None):
 def medico_view(request, pk=None):
     role = getRole(request)
     if request.method == 'GET':
-        if role not in ['Admin', 'Medico']: return HttpResponse("Unauthorized User", status=401)
+        if role not in ['Admin', 'Doctor']: return HttpResponse("Unauthorized User", status=401)
         if pk:
             medico = vl.get_doctor(pk)
             medico_dto = serializers.serialize('json', [medico,])

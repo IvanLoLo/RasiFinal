@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config, Csv
-#from djongo import base
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'users.login_middleware.LoginMiddleware',
 ]
 
 CACHES = {
@@ -91,6 +94,7 @@ WSGI_APPLICATION = 'usersService.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
 """
 DATABASES = {
     'default': {
@@ -98,14 +102,13 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 """
 
-DB_USERNAME = config('DB_USERNAME', default='admin')
-DB_PASSWORD = config('DB_PASSWORD', default='admin_password')
-DB_HOST = config('DB_HOST', default='34.132.173.31')
-DB_PORT = config('DB_PORT', default=27017, cast=int)
-DB_NAME = config('DB_NAME', default='your_database_name')
+DB_USERNAME = os.getenv('DB_USERNAME')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
+DB_NAME = os.getenv('DB_NAME')
 
 DATABASES = {
     'default': {
@@ -164,23 +167,4 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-LOGIN_URL = '/login/auth0'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = 'https://rasi.us.auth0.com/v2/logout?returnTo=http%3A%2F%2F{{ip_publica_instancia}}:8080'
-SOCIAL_AUTH_TRAILING_SLASH = False
-SOCIAL_AUTH_AUTH0_DOMAIN = 'rasi.us.auth0.com'
-SOCIAL_AUTH_AUTH0_KEY = 'hfP90WL51axfipuf8n1FmlypHLt6Or15'
-SOCIAL_AUTH_AUTH0_SECRET = '7xRWgxvaMMf63gTQhFJ0cf2lP23e0uTo29YGC4A7vHrjp7HeipZO6FhlZzq8S4rp'
-
-SOCIAL_AUTH_AUTH0_SCOPE = [
- 'openid',
- 'profile',
- 'email',
- 'role',
-]
-
-AUTHENTICATION_BACKENDS = {
- 'usersService.auth0backend.Auth0',
- 'django.contrib.auth.backends.ModelBackend',
-}
+AUTH_PATH = 'https://'+os.getenv('DOMAIN')+'/userinfo'
