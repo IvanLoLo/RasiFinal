@@ -2,12 +2,36 @@ import { Cita } from './citas.model.js';
 import { Op } from 'sequelize';
 import uuidValidate from 'uuid-validate';
 import getRole from './auth0backend.js';
+import axios from 'axios';
 
 const reviewRole = async (req, roles) => {
     const role = await getRole(req);
     if(roles.includes(role)) return true;
     return false;
 }
+
+const validDoctor = async (doctor) => {
+    try {
+        const response = await axios.get(`http://${process.env.USERS_PATH}/users/medicos/${doctor}`);
+        if(response.status === 200) return true;
+        return false;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+const validPatient = async (patient) => {
+    try {
+        const response = await axios.get(`http://${process.env.USERS_PATH}/users/pacientes/${patient}`);
+        if(response.status === 200) return true;
+        return false;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
 
 export const getCitas = async (req, res) => {
     try {
@@ -137,6 +161,9 @@ export const createCita = async (req, res) => {
         return res.status(400).json({message: 'Invalid data'});
     try {
         if(!await reviewRole(req, ['Admin', 'Doctor', 'Patient User'])) return res.status(401).json({message: 'Unauthorized User'});
+        if(!await validDoctor(doctor)) return res.status(400).json({message: 'Invalid doctor'});
+        if(!await validPatient(paciente)) return res.status(400).json({message: 'Invalid patient'});
+
         const newCita = await Cita.create({
             paciente,
             doctor,
