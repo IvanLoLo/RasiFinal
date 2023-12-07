@@ -11,6 +11,7 @@ ENV DB_PASSWORD unaldinos
 ENV DB_HOST 10.128.0.5
 ENV DB_PORT 27017
 ENV DB_NAME users_db
+ENV DOMAIN localhost:8000
 ENV JWT_SECRET t0pS3cr3t
 
 # Install Python dependencies
