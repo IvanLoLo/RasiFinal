@@ -77,14 +77,12 @@ export const getCitaByMes = async (req, res) => { //yyyy-mm format
     const date = req.params.mes;
     const currentDate = new Date(date);
     if(currentDate.getFullYear() < 2010 || isNaN(currentDate.getTime())) return res.status(400).json({message: 'Invalid date'});
-    const nextMonth = new Date(date);
-    nextMonth.setMonth(currentDate.getMonth() + 1);
 
     try {
         if(!await reviewRole(req, ['Admin'])) return res.status(401).json({message: 'Unauthorized User'});
 
         const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
+        const month = currentDate.getMonth();
 
         const count = await Cita.count({
             where: {

@@ -8,11 +8,11 @@ export const Cita = sequelize.define("cita", {
     primaryKey: true,
   },
   paciente: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   doctor: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   especialidad: {
