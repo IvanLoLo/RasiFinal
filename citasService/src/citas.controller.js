@@ -10,24 +10,28 @@ const reviewRole = async (req, roles) => {
     return false;
 }
 
-const validDoctor = async (doctor) => {
+const validDoctor = async (req, doctor) => {
     try {
-        const response = await axios.get(`http://${process.env.USERS_PATH}/users/medicos/${doctor}`);
+        const response = await axios.get(`http://${process.env.USERS_PATH}/users/medicos/${doctor}`,
+            {headers: {
+                'Authorization': req.headers.authorization
+            }});
         if(response.status === 200) return true;
         return false;
     } catch (error) {
-        console.log(error);
         return false;
     }
 }
 
-const validPatient = async (patient) => {
+const validPatient = async (req, patient) => {
     try {
-        const response = await axios.get(`http://${process.env.USERS_PATH}/users/pacientes/${patient}`);
+        const response = await axios.get(`http://${process.env.USERS_PATH}/users/pacientes/${patient}`,
+        {headers: {
+            'Authorization': req.headers.authorization
+        }});
         if(response.status === 200) return true;
         return false;
     } catch (error) {
-        console.log(error);
         return false;
     }
 }
@@ -89,7 +93,7 @@ export const getCitaByFecha = async (req, res) => { //yyyy-mm-dd format
             total_citas: count
         });
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         res.status(500).json({
             message: 'Something goes wrong',
             data: {}
@@ -124,7 +128,7 @@ export const getCitaByMes = async (req, res) => { //yyyy-mm format
         });
 
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         res.status(500).json({
             message: 'Something goes wrong',
             data: {}
@@ -147,7 +151,7 @@ export const getCitaByEspecialidad = async (req, res) => {
             count: count
         });
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         res.status(500).json({
             message: 'Something goes wrong',
             data: {}
@@ -161,8 +165,8 @@ export const createCita = async (req, res) => {
         return res.status(400).json({message: 'Invalid data'});
     try {
         if(!await reviewRole(req, ['Admin', 'Doctor', 'Patient User'])) return res.status(401).json({message: 'Unauthorized User'});
-        if(!await validDoctor(doctor)) return res.status(400).json({message: 'Invalid doctor'});
-        if(!await validPatient(paciente)) return res.status(400).json({message: 'Invalid patient'});
+        if(!await validDoctor(req, doctor)) return res.status(400).json({message: 'Invalid doctor'});
+        if(!await validPatient(req, paciente)) return res.status(400).json({message: 'Invalid patient'});
 
         const newCita = await Cita.create({
             paciente,
@@ -181,7 +185,7 @@ export const createCita = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         res.status(500).json({
             message: 'Something goes wrong',
             data: {}
